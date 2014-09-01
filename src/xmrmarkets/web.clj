@@ -9,10 +9,9 @@
 	    [clojure.core.async :refer [<! >! put! close! go go-loop]]))
 
 (defn get-xmr-ticker []
-  "get xmr ticker and convert to edn"
   (http/get "https://poloniex.com/public?command=returnTicker"
 	    (fn [{:keys [status headers body error]}]
-	      (prn-str (json/read-str body) "BTC_XMR"))))
+	      (prn-str (get (json/read-str body) "BTC_XMR")))))
 
 (def lolz {:a 1 :b 2})
 

@@ -16,19 +16,4 @@
   (let [server-ch (<! (ws-ch "ws://localhost:8080/ws"{:format :edn}))]
     (go-loop []
       (prn (<! server-ch))
-      (recur))
-    (>! server-ch "hello lol")))
-
-(comment
-(def ws (js/WebSocket. "ws://localhost:8080/ws"))
-
-(defn onOpen []
-  (.send ws "lolgos")
-  (.log js/console (.-readyState ws)))
-
-(defn onMessage [m]
-  (.log js/console m))
-
-(set! (.-onopen ws) onOpen)
-(set! (.-onmessage ws) onMessage)
-)
+      (recur))))
