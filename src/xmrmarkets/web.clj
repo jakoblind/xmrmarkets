@@ -5,15 +5,12 @@
 	    [compojure.route :refer [resources]]
 	    [chord.http-kit :refer [wrap-websocket-handler]]
 	    [clojure.data.json :as json]
-	    [clojure.edn :as edn]
 	    [clojure.core.async :refer [<! >! put! close! go go-loop]]))
 
 (defn get-xmr-ticker []
   (http/get "https://poloniex.com/public?command=returnTicker"
 	    (fn [{:keys [status headers body error]}]
-	      (prn-str (get (json/read-str body) "BTC_XMR")))))
-
-(def lolz {:a 1 :b 2})
+	      (get (json/read-str body) "BTC_XMR"))))
 
 (defn index [req]
   {:status  200
@@ -31,7 +28,7 @@
   (resources "/")
   (GET "/" [] index)
   (GET "/ws" [] (-> ws-handler
-		    (wrap-websocket-handler {:format :json-kw}))))
+		    (wrap-websocket-handler {:format :edn}))))
 
 (defn -main [& args]
   (run-server app {:port 8080})
