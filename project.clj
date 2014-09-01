@@ -8,6 +8,7 @@
 		 [quiescent "0.1.1"]
 		 [http-kit "2.1.16"]
 		 [compojure "1.1.8"]
+		 [org.clojure/data.json "0.2.5"]
 		 [jarohen/chord "0.3.1"]]
   :main xmrmarkets.web
   :profiles {:dev {:dependencies [[midje "1.6.3"]]

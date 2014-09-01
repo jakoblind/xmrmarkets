@@ -1,9 +1,20 @@
 (ns xmrmarkets.web
   (:require [org.httpkit.server :refer [run-server]]
+	    [org.httpkit.client :as http]
 	    [compojure.core :refer [defroutes GET]]
 	    [compojure.route :refer [resources]]
 	    [chord.http-kit :refer [wrap-websocket-handler]]
-	    [clojure.core.async :refer [<! >! put! close! go-loop]]))
+	    [clojure.data.json :as json]
+	    [clojure.edn :as edn]
+	    [clojure.core.async :refer [<! >! put! close! go go-loop]]))
+
+(defn get-xmr-ticker []
+  "get xmr ticker and convert to edn"
+  (http/get "https://poloniex.com/public?command=returnTicker"
+	    (fn [{:keys [status headers body error]}]
+	      (prn-str (json/read-str body) "BTC_XMR"))))
+
+(def lolz {:a 1 :b 2})
 
 (defn index [req]
   {:status  200
@@ -13,13 +24,9 @@
 
 (defn ws-handler [{:keys [ws-channel] :as req}]
   (println "Opened connection from" (:remote-addr req))
-  (go-loop []
-    (when-let [{:keys [message error] :as msg} (<! ws-channel)]
-      (prn "Message received:" msg)
-      (>! ws-channel (if error
-		       (format "Error: '%s'." (pr-str msg))
-		       {:received (format "You passed: '%s' at %s." (pr-str message) (java.util.Date.))}))
-      (recur))))
+  (let [t (get-xmr-ticker)]
+    (go
+      (>! ws-channel @t))))
 
 (defroutes app
   (resources "/")

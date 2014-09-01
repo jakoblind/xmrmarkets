@@ -13,7 +13,7 @@
 (enable-console-print!)
 
 (go
-  (let [server-ch (<! (ws-ch "ws://localhost:8080/ws"{:format :json-kw}))]
+  (let [server-ch (<! (ws-ch "ws://localhost:8080/ws"{:format :edn}))]
     (go-loop []
       (prn (<! server-ch))
       (recur))
