@@ -7,13 +7,15 @@
 
 (q/defcomponent Ticker [t]
   (prn t)
-  (apply d/div {:className "lolz"} (get (:message t) "last")))
+  (apply d/div {:className "lolz"} (get t "last")))
 
 
 (enable-console-print!)
 
 (go
-  (let [server-ch (<! (ws-ch "ws://localhost:8080/ws"{:format :edn}))]
+  (let [server-ch (<! (ws-ch "ws://localhost:8080/ws"{:format :edn}))
+	container (.getElementById js/document "main")]
     (go-loop []
-      (q/render (Ticker (<! server-ch)) (.getElementById js/document "main"))
-      (recur))))
+      (when-let [t (:message (<! server-ch))]
+	(q/render (Ticker t) container)
+	(recur)))))
