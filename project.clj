@@ -10,6 +10,7 @@
 		 [compojure "1.1.8"]
 		 [ring/ring-devel "1.1.8"]
 		 [ring/ring-core "1.1.8"]
+		 [org.clojure/tools.logging "0.3.0"]
 		 [org.clojure/data.json "0.2.5"]
 		 [org.clojure/tools.cli "0.2.2"]
 		 [jarohen/chord "0.3.1"]]

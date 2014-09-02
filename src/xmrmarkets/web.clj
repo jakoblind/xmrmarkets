@@ -8,6 +8,7 @@
 	    [chord.http-kit :refer [wrap-websocket-handler]]
 	    [clojure.data.json :as json]
 	    [clojure.tools.cli :refer [cli]]
+	    [clojure.tools.logging :as log]
 	    [clojure.core.async :refer [<! >! put! close! go go-loop timeout]]))
 
 (defn get-xmr-ticker []
@@ -48,4 +49,4 @@
 	  (System/exit 0))
     (let [handler (if in-dev? (reload/wrap-reload (site #'routes)) (site routes))]
       (run-server handler {:port 8080})
-      (println "server started"))))
+      (log/info "server started"))))
