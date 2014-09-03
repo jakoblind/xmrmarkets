@@ -9,7 +9,7 @@
             [clojure.data.json :as json]
             [clojure.tools.cli :refer [cli]]
             [clojure.tools.logging :as log]
-            [clojure.core.async :refer [<! >! put! close! go go-loop timeout]]))
+            [clojure.core.async :refer [<! >! put! close! go go-loop timeout]])(:gen-class))
 
 (defn get-xmr-ticker []
   (log/info "called get xmr ticker webservice PROD")
