@@ -5,17 +5,24 @@
           [quiescent.dom :as d])
 (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(q/defcomponent Ticker [t]
-  (prn t)
-  (apply d/div {} t))
-
-(q/defcomponent HistoryItem [h]
-  (apply d/div {} (h "amount") "XMR, " (h "date") ", " (h "rate") ", " (h "up-down")))
-
 (.add (.-tz js/moment) "Etc/UTC|UTC|0|0|")
 
+(q/defcomponent Ticker [t]
+  (d/div {:className "ticker"}
+         (TickerPrice t) (TickerCurrency)))
+
+(q/defcomponent TickerCurrency []
+  (d/div {:className "ticker-currency"} "BTC/XMR"))
+
+(q/defcomponent TickerPrice [t]
+  (d/div {:className "ticker-price"} t))
+
+(q/defcomponent HistoryItem [h]
+  (d/div {:className (str "history-item " (h "up-down")) }
+         (h "amount") "XMR, " (h "date") ", " (h "rate") ", " (h "up-down")))
+
 (q/defcomponent History [h]
-  (apply d/div {}
+  (apply d/div {:className "history-container"}
          (defn sort-by-date [m]
            (sort-by #(vec (map % "date")) m))
          (defn date-human-readable [m]
@@ -27,13 +34,13 @@
          (defn add-down-up [v i]
            (let [up-down (if (= (first v) null) "" (if (>= (i "rate") ((first v) "rate")) "up" "down"))]
              (cons (assoc i "up-down" up-down) v)))
-         (let [sort (reduce add-down-up [] (reverse (sort-by-date (date-human-readable h))))]
+         (let [sort (reduce add-down-up [] (reverse (take 20 (sort-by-date (date-human-readable h)))))]
            (map HistoryItem sort))))
 
 (q/defcomponent PriceInfo [d]
   (d/div {}
          (Ticker ((d "ticker") "last"))
-         (History (take 5 (d "history")))))
+         (History (d "history"))))
 
 (enable-console-print!)
 
