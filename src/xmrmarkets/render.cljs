@@ -12,12 +12,14 @@
 (q/defcomponent HistoryItem [h]
   (apply d/div {} (h "amount") ", " (h "date") ", " (h "rate") ", up or down"))
 
+(.add (.-tz js/moment) "Etc/UTC|UTC|0|0|")
+
 (q/defcomponent History [h]
   (apply d/div {}
          (defn sort-by-date [m]
            (sort-by #(vec (map % "date")) m))
          (defn date-human-readable [m]
-           (map (fn [i] (update-in i ["date"] (fn [a] (.fromNow (js/moment. a "YYYY-MM-DD hh:mm:ss"))))) m))
+           (map (fn [i] (update-in i ["date"] (fn [a] (.fromNow (.tz js/moment a "YYYY-MM-DD hh:mm:ss" "Etc/UTC"))))) m))
          (let [sort (sort-by-date (date-human-readable h))]
            (map HistoryItem sort))))
 

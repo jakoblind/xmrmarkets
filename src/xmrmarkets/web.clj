@@ -41,12 +41,10 @@
 
 (defn ws-handler [{:keys [ws-channel] :as req}]
   (println "Opened connection from" (:remote-addr req))
-  (let [t @latest-xmr-ticker]
-    (log/info t)
-    (go-loop []
-      (>! ws-channel t)
-      (<! (timeout 1000))
-      (recur))))
+  (go-loop []
+    (>! ws-channel @latest-xmr-ticker)
+    (<! (timeout 1000))
+    (recur)))
 
 (defn index [req]
   {:status  200
