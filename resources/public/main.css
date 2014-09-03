@@ -2,18 +2,29 @@ body {
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-weight: 300;
 }
+
+.up {
+    color: green;
+}
+.down {
+    color: red;
+}
 .history-container {
     clear:both;
 }
+
+.ticker {
+}
+
 .ticker-price {
-    font-size: 35px;
+    font-size: 40px;
     display:block;
     float:left;
-    width:200px;
 }
 
 .ticker-currency {
+    margin-top:19px;
+    margin-left:5px;
     display:block;
     float:left;
-    width:200px;
 }

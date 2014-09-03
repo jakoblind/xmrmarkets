@@ -18,8 +18,9 @@
   (d/div {:className "ticker-price"} t))
 
 (q/defcomponent HistoryItem [h]
-  (d/div {:className (str "history-item " (h "up-down")) }
-         (h "amount") "XMR, " (h "date") ", " (h "rate") ", " (h "up-down")))
+  (d/div {:className "history-item "  }
+         (h "amount") "  " (h "date") " " (h "rate") " "
+         (d/i {:className (str "fa fa-caret-" (h "up-down") " " (h "up-down") )})))
 
 (q/defcomponent History [h]
   (apply d/div {:className "history-container"}
