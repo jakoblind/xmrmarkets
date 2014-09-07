@@ -52,9 +52,9 @@
    :body    "hello HTTP!"})
 
 (defroutes routes
-  (resources "/")
-  (GET "/" [] index)
-  (GET "/ws" [] (-> ws-handler
+  (resources "/a/")
+  (GET "/a/" [] index)
+  (GET "/a/ws" [] (-> ws-handler
                     (wrap-websocket-handler {:format :edn}))))
 
 (defn -main [& args]

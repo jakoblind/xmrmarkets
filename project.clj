@@ -2,27 +2,33 @@
   :description "XMR market ticker"
   :url "http://jakoblind.se/xmr"
   :license {:name "Eclipse Public License"
-	    :url "http://www.eclipse.org/legal/epl-v10.html"}
+            :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
-		 [org.clojure/clojurescript "0.0-2268"]
-		 [quiescent "0.1.1"]
-		 [http-kit "2.1.16"]
-		 [compojure "1.1.8"]
-		 [ring/ring-devel "1.1.8"]
-		 [ring/ring-core "1.1.8"]
-		 [org.clojure/tools.logging "0.3.0"]
-		 [org.clojure/data.json "0.2.5"]
-		 [org.clojure/tools.cli "0.2.2"]
-		 [jarohen/chord "0.3.1"]]
+                 [org.clojure/clojurescript "0.0-2268"]
+                 [quiescent "0.1.1"]
+                 [http-kit "2.1.16"]
+                 [compojure "1.1.8"]
+                 [ring/ring-devel "1.1.8"]
+                 [ring/ring-core "1.1.8"]
+                 [org.clojure/tools.logging "0.3.0"]
+                 [org.clojure/data.json "0.2.5"]
+                 [org.clojure/tools.cli "0.2.2"]
+                 [jarohen/chord "0.3.1"]]
   :main xmrmarkets.web
-  :profiles {:dev {:dependencies [[midje "1.6.3"]]
-		   :plugins[[lein-cljsbuild "1.0.3"]]
-		   :cljsbuild {:builds[{
-					 :id "main"
-					 :source-paths ["src"]
-					:compiler {
-						    :output-to "target/classes/public/app.js"
-						    :output-dir "target/classes/public"
-						    :optimizations :whitespace
-						    :pretty-print true
-						    }}]}}})
+
+  :source-paths ["src"]
+  :plugins[[lein-cljsbuild "1.0.3"]]
+
+  :profiles {:uberjar {:aot :all
+                       :hooks [leiningen.cljsbuild]}}
+  :cljsbuild {:builds[{
+                       :id "main"
+                       :source-paths ["src"]
+                                        ;                                        :jar true
+                       :compiler {
+                                  :output-to "target/classes/public/app.js"
+                                        ;:output-to "resources/public/app.js"
+                                  :output-dir "target/classes/public"
+                                  :optimizations :whitespace
+                                  :pretty-print true
+                                  }}]})

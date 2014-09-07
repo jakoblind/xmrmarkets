@@ -46,7 +46,7 @@
 (enable-console-print!)
 
 (go
-  (let [server-ch (<! (ws-ch "ws://localhost:8080/ws"{:format :edn}))
+  (let [server-ch (<! (ws-ch "ws://jakoblind.se:8080/a/ws"{:format :edn}))
         container (.getElementById js/document "main")]
     (go-loop []
       (when-let [d (:message (<! server-ch))]
