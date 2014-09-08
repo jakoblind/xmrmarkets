@@ -51,17 +51,17 @@
 (defn page-frame []
   (html5
    [:head
-    [:title (get (get @latest-xmr-ticker "ticker") "last")]
+    [:title (str ((@latest-xmr-ticker "ticker") "last") " BTC/XMR")]]
+   [:body [:div#main[:div.ticker
+		     [:div.ticker-price
+				  (get (get @latest-xmr-ticker "ticker") "last")]
+		     [:div.ticker-currency "BTC/XMR"]]]
     (include-css "font-awesome-4.2.0/css/font-awesome.min.css")
     (include-css "main.css")
     (include-js "react.js")
     (include-js "moment.js")
     (include-js "moment-timezone.js")
-    (include-js "app.js")]
-   [:body [:div#main[:div.ticker
-		     [:div.ticker-price
-				  (get (get @latest-xmr-ticker "ticker") "last")]
-		     [:div.ticker-currency "BTC/XMR"]]]]))
+    (include-js "app.js")]))
 
 (defroutes routes
   (resources "/a/")

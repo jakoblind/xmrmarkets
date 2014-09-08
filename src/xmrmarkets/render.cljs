@@ -50,6 +50,6 @@
 	container (.getElementById js/document "main")]
     (go-loop []
       (when-let [d (:message (<! server-ch))]
-	(set! (.-title js/document) ((d "ticker") "last"))
+	(set! (.-title js/document) (str ((d "ticker") "last") " BTC/XMR"))
 	(q/render (PriceInfo d) container)
 	(recur)))))
