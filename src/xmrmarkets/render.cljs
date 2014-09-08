@@ -50,5 +50,6 @@
 	container (.getElementById js/document "main")]
     (go-loop []
       (when-let [d (:message (<! server-ch))]
+	(set! (.-title js/document) ((d "ticker") "last"))
 	(q/render (PriceInfo d) container)
 	(recur)))))
