@@ -1,5 +1,5 @@
 //http://bl.ocks.org/abeppu/1074045
-window.XMR = window.XMR || {};
+//window.XMR = window.XMR || {};
 (function(){
     "use strict";
 
