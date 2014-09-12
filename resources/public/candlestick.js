@@ -1,5 +1,5 @@
 //http://bl.ocks.org/abeppu/1074045
-//window.XMR = window.XMR || {};
+window.XMR = window.XMR || {};
 (function(){
     "use strict";
 
@@ -11,7 +11,7 @@
 
     function max(a, b){ return a > b ? a : b; }
 
-    function buildChart(data){
+    window.XMR.buildChart = function(data){
         var margin = 50;
 
         var chart = d3.select("#chart")
@@ -89,6 +89,6 @@
 
     }
 
-    buildChart(pd);
+    window.XMR.buildChart(pd);
 
 })();
