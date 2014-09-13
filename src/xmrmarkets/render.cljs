@@ -59,6 +59,8 @@
 
 (q/render (ChartControl) (.getElementById js/document "chart-control"))
 
+(GET (str "chart/24h/") {:handler chart-ajax-handler})
+
 (go
   (let [server-ch (<! (ws-ch "ws://jakoblind.se/xmr/ws"{:format :edn}))
         container (.getElementById js/document "main")]
