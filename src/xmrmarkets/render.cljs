@@ -2,20 +2,21 @@
 (:require [chord.client :refer [ws-ch]]
           [cljs.core.async :refer [chan <! >! put! close! timeout]]
           [quiescent :as q :include-macros true]
+          [ajax.core :refer [GET]]
           [quiescent.dom :as d])
 (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (.add (.-tz js/moment) "Etc/UTC|UTC|0|0|")
-
-(q/defcomponent Ticker [t]
-  (d/div {:className "ticker"}
-         (TickerPrice t) (TickerCurrency)))
 
 (q/defcomponent TickerCurrency []
   (d/div {:className "ticker-currency"} "BTC/XMR"))
 
 (q/defcomponent TickerPrice [t]
   (d/div {:className "ticker-price"} t))
+
+(q/defcomponent Ticker [t]
+  (d/div {:className "ticker"}
+         (TickerPrice t) (TickerCurrency)))
 
 (q/defcomponent HistoryItem [h]
   (d/div {:className "history-item "  }
@@ -43,7 +44,19 @@
          (Ticker ((d "ticker") "last"))
          (History (d "history"))))
 
+(q/defcomponent ChartControlItem [period] (d/a {:onClick #(GET (str "chart/" period "/") {:handler chart-ajax-handler})} period))
+
+(def periodlist (list "6h" "24h" "2d" "4d" "1w" "2w" "1m" "all"))
+
+(q/defcomponent ChartControl []
+  (apply d/div (map ChartControlItem periodlist)))
+
+(defn chart-ajax-handler [response]
+  (.buildChart (.-XMR js/window) (.parse js/JSON (str response))))
+
 (enable-console-print!)
+
+(q/render (ChartControl) (.getElementById js/document "chart-control"))
 
 (go
   (let [server-ch (<! (ws-ch "ws://jakoblind.se/xmr/ws"{:format :edn}))
@@ -54,4 +67,4 @@
         (q/render (PriceInfo d) container)
         (recur)))))
 
-#_ TODO ajax stuff here(.buildChart (.-XMR js/window) )
+; TODO ajax stuff here(.buildChart (.-XMR js/window) )

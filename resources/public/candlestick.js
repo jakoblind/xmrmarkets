@@ -14,6 +14,8 @@ window.XMR = window.XMR || {};
     window.XMR.buildChart = function(data){
         var margin = 50;
 
+        d3.select("svg").remove();
+
         var chart = d3.select("#chart")
             .append("svg:svg")
             .attr("class", "chart")
