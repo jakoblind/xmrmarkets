@@ -44,12 +44,13 @@
          (Ticker ((d "ticker") "last"))
          (History (d "history"))))
 
-(q/defcomponent ChartControlItem [period] (d/a {:onClick #(GET (str "chart/" period "/") {:handler chart-ajax-handler})} period))
 
 (def periodlist (list "6h" "24h" "2d" "4d" "1w" "2w" "1m" "all"))
 
 (q/defcomponent ChartControl []
-  (apply d/div (map ChartControlItem periodlist)))
+  (apply d/div {}  (map ChartControlItem periodlist)))
+
+(q/defcomponent ChartControlItem [period] (d/a {:onClick #(GET (str "chart/" period "/") {:handler chart-ajax-handler})} (str period " ")))
 
 (defn chart-ajax-handler [response]
   (.buildChart (.-XMR js/window) (.parse js/JSON (str response))))
