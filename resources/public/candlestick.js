@@ -28,8 +28,8 @@ window.XMR = window.XMR || {};
         var marginLines = 50;
         var marginRight = 75;
         var marginBottom = 75;
-        var marginTop = 50;
-        var marginLeft = 0;
+        var marginTop = 15;
+        var marginLeft = 15;
 
         d3.select("svg").remove();
 
@@ -55,7 +55,7 @@ window.XMR = window.XMR || {};
             .attr("class", "x")
             .attr("x1", x)
             .attr("x2", x)
-            .attr("y1", marginLines)
+            .attr("y1", marginTop)
             .attr("y2", height - marginBottom)
             .attr("stroke", "#ccc")
             .attr("stroke-width", "0.5");
@@ -86,7 +86,7 @@ window.XMR = window.XMR || {};
             .attr("y", height - marginLines);
 
         chart.selectAll("text.yrule")
-            .data(y.ticks(7))
+            .data(y.ticks(10))
             .enter().append("svg:text")
             .attr("class", "yrule")
             .attr("x", width - marginLines)
