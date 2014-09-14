@@ -35,7 +35,7 @@ window.XMR = window.XMR || {};
         var x = d3.scale.linear()
             .domain([d3.min(data.map(function(d){return d.date})),
                      d3.max(data.map(function(d){return d.date}))])
-            .range([marginLines,width-marginRight]);
+            .range([marginLeft,width-marginRight]);
 
 
 
@@ -47,7 +47,8 @@ window.XMR = window.XMR || {};
             .attr("x2", x)
             .attr("y1", marginLines)
             .attr("y2", height - marginBottom)
-            .attr("stroke", "#ccc");
+            .attr("stroke", "#ccc")
+            .attr("stroke-width", "0.5");
 
         chart.selectAll("line.y")
             .data(y.ticks(10))
@@ -57,7 +58,8 @@ window.XMR = window.XMR || {};
             .attr("x2", width - marginRight)
             .attr("y1", y)
             .attr("y2", y)
-            .attr("stroke", "#ccc");
+            .attr("stroke", "#ccc")
+            .attr("stroke-width", "0.5");
 
         chart.selectAll("text.xrule")
             .data(x.ticks(10))
@@ -67,14 +69,14 @@ window.XMR = window.XMR || {};
             .attr("y", height - marginLines)
             .attr("dy", 15)
             .attr("text-anchor", "middle")
-            .text(function(d){ var date = new Date(d * 1000); return addLeadingZeros(date.getHours(), 2) + ":" + addLeadingZeros(date.getMinutes(), 2); })
+            .text(function(d){ var date = new Date(d * 1000); return date.toLocaleTimeString("en-us", {hour:"2-digit", minute:"2-digit", hour12: false}); })
             .append('tspan')
-            .text(function(d){ var date = new Date(d * 1000); return addLeadingZeros((date.getMonth() + 1), 2)+"/"+addLeadingZeros(date.getDate(),2); })
+            .text(function(d){ var date = new Date(d * 1000); return date.toLocaleDateString("en-us", {day:"numeric", month:"short"}) })
             .attr("x", x)
             .attr("y", height - marginLines);
 
         chart.selectAll("text.yrule")
-            .data(y.ticks(10))
+            .data(y.ticks(7))
             .enter().append("svg:text")
             .attr("class", "yrule")
             .attr("x", width - marginLines)
@@ -92,17 +94,18 @@ window.XMR = window.XMR || {};
             .data(data)
             .enter()
             .append('svg:rect')
-            .attr('x', function(d) { // sets the x position of the bar
+            .attr('x', function(d) {
                 return x(d.date);
             })
-            .attr('y', function(d) { // sets the y position of the bar
+            .attr('y', function(d) {
                 return yVolume(d.quoteVolume);
             })
-            .attr('width', function(d) { return 0.5 * (width - (marginRight + marginLeft))/data.length; }) // sets the width of bar
-            .attr('height', function(d) {      // sets the height of bar
+            .attr('width', function(d) { return 0.5 * (width - (marginRight + marginLeft))/data.length; })
+            .attr('height', function(d) {
                 return ((height - marginBottom) - yVolume(d.quoteVolume));
             })
             .attr('fill', 'lightgrey');
+
         chart.append("svg:g").selectAll("rect")
             .data(data)
             .enter().append("svg:rect")
