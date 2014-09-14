@@ -3,7 +3,7 @@ window.XMR = window.XMR || {};
 (function(){
     "use strict";
 
-    var width = 600;
+    var width = 1000;
     var height = 500;
 
     function min(a, b){ return a < b ? a : b ; }
@@ -15,8 +15,11 @@ window.XMR = window.XMR || {};
     }
 
     window.XMR.buildChart = function(data){
-        var margin = 0;
         var marginLines = 50;
+        var marginRight = 75;
+        var marginBottom = 75;
+        var marginTop = 50;
+        var marginLeft = 50;
 
         d3.select("svg").remove();
 
@@ -28,11 +31,13 @@ window.XMR = window.XMR || {};
 
         var y = d3.scale.linear()
             .domain([d3.min(data.map(function(x) {return x["low"];})), d3.max(data.map(function(x){return x["high"];}))])
-            .range([height-marginLines, marginLines]);
+            .range([height-marginBottom, marginTop]);
         var x = d3.scale.linear()
             .domain([d3.min(data.map(function(d){return d.date})),
                      d3.max(data.map(function(d){return d.date}))])
-            .range([marginLines,width-75]);
+            .range([marginLines,width-marginRight]);
+
+
 
         chart.selectAll("line.x")
             .data(x.ticks(10))
@@ -41,7 +46,7 @@ window.XMR = window.XMR || {};
             .attr("x1", x)
             .attr("x2", x)
             .attr("y1", marginLines)
-            .attr("y2", height - marginLines)
+            .attr("y2", height - marginBottom)
             .attr("stroke", "#ccc");
 
         chart.selectAll("line.y")
@@ -49,7 +54,7 @@ window.XMR = window.XMR || {};
             .enter().append("svg:line")
             .attr("class", "y")
             .attr("x1", marginLines)
-            .attr("x2", width - 75)
+            .attr("x2", width - marginRight)
             .attr("y1", y)
             .attr("y2", y)
             .attr("stroke", "#ccc");
@@ -78,25 +83,61 @@ window.XMR = window.XMR || {};
             .attr("dx", 20)
             .attr("text-anchor", "middle")
             .text(function(a){return Math.round(a * 100000)/100000;});
+       //volume
+        var yVolume = d3.scale.linear()
+            .domain([0, d3.max(data.map(function(x){return x["quoteVolume"];}))])
+            .range([height-marginBottom, marginLines]);
 
-        chart.selectAll("rect")
+        chart.append("svg:g").selectAll('rect')
+            .data(data)
+            .enter()
+            .append('svg:rect')
+            .attr('x', function(d) { // sets the x position of the bar
+                return x(d.date);
+            })
+            .attr('y', function(d) { // sets the y position of the bar
+                return yVolume(d.quoteVolume);
+            })
+            .attr('width', function(d) { return 0.5 * (width - (marginRight + marginLeft))/data.length; }) // sets the width of bar
+            .attr('height', function(d) {      // sets the height of bar
+                return ((height - marginBottom) - yVolume(d.quoteVolume));
+            })
+            .attr('fill', 'lightgrey');
+        chart.append("svg:g").selectAll("rect")
             .data(data)
             .enter().append("svg:rect")
             .attr("x", function(d) { return x(d.date)})
             .attr("y", function(d) {return y(max(d.open, d.close));})
             .attr("height", function(d) { return y(min(d.open, d.close))-y(max(d.open, d.close));})
-            .attr("width", function(d) { return 0.5 * (width - 2*marginLines)/data.length; })
+            .attr("width", function(d) { return 0.5 * (width - (marginRight + marginLeft))/data.length; })
             .attr("fill",function(d) { return d.open > d.close ? "red" : "green" ;});
 
         chart.selectAll("line.stem")
             .data(data)
             .enter().append("svg:line")
             .attr("class", "stem")
-            .attr("x1", function(d) { return x(d.date) + 0.25 * (width - 2 * marginLines)/ data.length;})
-            .attr("x2", function(d) { return x(d.date) + 0.25 * (width - 2 * marginLines)/ data.length;})
+            .attr("x1", function(d) { return x(d.date) + 0.25 * (width - (marginRight + marginLeft))/ data.length;})
+            .attr("x2", function(d) { return x(d.date) + 0.25 * (width - (marginRight + marginLeft))/ data.length;})
             .attr("y1", function(d) { return y(d.high);})
             .attr("y2", function(d) { return y(d.low); })
             .attr("stroke", function(d){ return d.open > d.close ? "red" : "green"; })
+
+
+//line
+        /*var lineFunc = d3.svg.line()
+            .x(function(d) {
+                return x(d.date);
+            })
+            .y(function(d) {
+                return y(d.weightedAverage);
+            }).interpolate('basis');
+
+        chart.append('svg:path')
+            .attr('d', lineFunc(data))
+            .attr('stroke', 'blue')
+            .attr('stroke-width', 2)
+            .attr('fill', 'none');
+*/
 
     }
 

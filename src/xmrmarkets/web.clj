@@ -79,8 +79,8 @@
 
 (defn periodmap [] {
                      "6h" (list (time-minus (t/hours 6)) 9999999999 1800)
-                     "24h" (list (time-minus (t/hours 24)) 9999999999 1800)
-                     "2d" (list (time-minus (t/days 2)) 9999999999 1800)
+                     "24h" (list (time-minus (t/hours 24)) 9999999999 7200)
+                     "2d" (list (time-minus (t/days 2)) 9999999999 7200)
                      "4d" (list (time-minus (t/days 4)) 9999999999 7200)
                      "1w" (list (time-minus (t/weeks 1)) 9999999999 14400)
                      "2w" (list (time-minus (t/weeks 2)) 9999999999 14400)
