@@ -50,7 +50,7 @@
 (q/defcomponent ChartControl []
   (apply d/div {}  (map ChartControlItem periodlist)))
 
-(q/defcomponent ChartControlItem [period] (d/a {:onClick #(GET (str "chart/" period "/") {:handler chart-ajax-handler})} (str period " ")))
+(q/defcomponent ChartControlItem [period] (d/a {:className "chartmenu" :onClick #(GET (str "chart/" period "/") {:handler chart-ajax-handler})} (str period " ")))
 
 (defn chart-ajax-handler [response]
   (.buildChart (.-XMR js/window) (.parse js/JSON (str response))))

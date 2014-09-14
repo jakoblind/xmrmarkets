@@ -28,3 +28,17 @@ body {
     display:block;
     float:left;
 }
+
+.chartmenu {
+    cursor: pointer;
+}
+
+#pricecontainer {
+    display: block;
+    float:left;
+}
+
+#chartarea {
+    display: block;
+    float:left;
+}

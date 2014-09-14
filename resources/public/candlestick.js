@@ -3,8 +3,8 @@ window.XMR = window.XMR || {};
 (function(){
     "use strict";
 
-    var width = 1000;
-    var height = 500;
+    var width = 900;
+    var height = 450;
 
     function min(a, b){ return a < b ? a : b ; }
 
@@ -13,13 +13,23 @@ window.XMR = window.XMR || {};
     function addLeadingZeros(input, max) {
         return ('0'+input).slice(-1 * max);
     }
+/*
+    var chartElem = document.getElementById("chart");
+    var chartContainerElem = document.getElementById("chartcontainer");
+    window.onresize = function() {
+        var aspect = chartElem.offsetWidth / chartElem.offsetHeight;
+        var targetWidth = window.outerWidth;
+        console.log("setting width" + targetWidth)
+        chartElem.style.width = targetWidth;
+        chartElem.style.height = Math.round(targetWidth / aspect);
+    };*/
 
     window.XMR.buildChart = function(data){
         var marginLines = 50;
         var marginRight = 75;
         var marginBottom = 75;
         var marginTop = 50;
-        var marginLeft = 50;
+        var marginLeft = 0;
 
         d3.select("svg").remove();
 
@@ -54,7 +64,7 @@ window.XMR = window.XMR || {};
             .data(y.ticks(10))
             .enter().append("svg:line")
             .attr("class", "y")
-            .attr("x1", marginLines)
+            .attr("x1", marginLeft)
             .attr("x2", width - marginRight)
             .attr("y1", y)
             .attr("y2", y)
