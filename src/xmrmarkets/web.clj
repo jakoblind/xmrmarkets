@@ -46,8 +46,7 @@
 (defn update-ticker [] (future
                          (while true
                            (reset! latest-xmr-ticker (get-xmr-all))
-                           (Thread/sleep 60000))
-                         ))
+                           (Thread/sleep 60000))))
 
 (defn ws-handler [{:keys [ws-channel] :as req}]
   (println "Opened connection from" (:remote-addr req))

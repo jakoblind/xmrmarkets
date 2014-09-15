@@ -33,6 +33,10 @@ body {
     cursor: pointer;
 }
 
+.selected-period {
+    font-weight: bold;
+}
+
 #pricecontainer {
     display: block;
     float:left;
