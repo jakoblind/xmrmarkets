@@ -23,9 +23,18 @@
 
 (defn get-xmr-trade-history []
   (log/info "called get xmr ticker webservice PROD")
+  (defn sort-by-date [m]
+    (sort-by #(vec (map % "date")) m))
+  (comment (defn date-human-readable [m]
+     (map (fn [i]
+            (update-in i ["date"]
+                       (fn [a]
+                         (.fromNow
+                          (.tz js/moment a "YYYY-MM-DD hh:mm:ss" "Etc/UTC"))))) m)))
   (http/get "https://poloniex.com/public?command=returnTradeHistory&currencyPair=BTC_XMR"
             (fn [{:keys [status headers body error]}]
-              (json/read-str body))))
+              (take 20 (sort-by-date (json/read-str body))))))
+
 
 (defn get-xmr-chart-history [start, end, period]
   (log/info "called get xmr ticker webservice PROD")

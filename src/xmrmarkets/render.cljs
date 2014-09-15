@@ -36,7 +36,7 @@
          (defn add-down-up [v i]
            (let [up-down (if (= (first v) null) "" (if (>= (i "rate") ((first v) "rate")) "up" "down"))]
              (cons (assoc i "up-down" up-down) v)))
-         (let [sort (reduce add-down-up [] (reverse (take 20 (sort-by-date (date-human-readable h)))))]
+         (let [sort (reduce add-down-up [] (reverse (date-human-readable h)))]
            (map HistoryItem sort))))
 
 (q/defcomponent PriceInfo [d]
