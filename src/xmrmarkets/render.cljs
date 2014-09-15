@@ -47,17 +47,28 @@
 
 (def periodlist (list "6h" "24h" "2d" "4d" "1w" "2w" "1m" "all"))
 
-(q/defcomponent ChartControl []
-  (apply d/div {}  (map ChartControlItem periodlist)))
-
-(q/defcomponent ChartControlItem [period] (d/a {:className "chartmenu" :onClick #(GET (str "chart/" period "/") {:handler chart-ajax-handler})} (str period " ")))
-
 (defn chart-ajax-handler [response]
   (.buildChart (.-XMR js/window) (.parse js/JSON (str response))))
 
+(defn render-chart-control [selected-period] (q/render (ChartControl selected-period) (.getElementById js/document "chart-control")))
+
+(defn on-chart-period-click [period]
+  (fn []
+    (render-chart-control period)
+    (GET (str "chart/" period "/")
+         {:handler chart-ajax-handler})))
+
+(q/defcomponent ChartControlItem [selected-period period]
+  (println selected-period)
+  (d/a {:className (str "chartmenu " (when (= selected-period period) "selected-period"))
+        :onClick (on-chart-period-click period)} (str period " ")))
+
+(q/defcomponent ChartControl [selected-period]
+  (apply d/div {}  (map (fn [in] (ChartControlItem selected-period in)) periodlist)))
+
 (enable-console-print!)
 
-(q/render (ChartControl) (.getElementById js/document "chart-control"))
+(render-chart-control "24h")
 
 (GET (str "chart/24h/") {:handler chart-ajax-handler})
 
@@ -69,5 +80,3 @@
         (set! (.-title js/document) (str ((d "ticker") "last") " BTC/XMR"))
         (q/render (PriceInfo d) container)
         (recur)))))
-
-; TODO ajax stuff here(.buildChart (.-XMR js/window) )
