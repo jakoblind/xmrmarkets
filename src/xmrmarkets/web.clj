@@ -5,6 +5,7 @@
             [compojure.handler :refer [site]]
             [clj-time.core :as t]
             [clj-time.coerce :as c]
+            [clj-time.format :as f]
             [compojure.core :refer [defroutes GET]]
             [compojure.route :refer [resources]]
             [chord.http-kit :refer [wrap-websocket-handler]]
@@ -21,20 +22,34 @@
             (fn [{:keys [status headers body error]}]
               (get (json/read-str body) "BTC_XMR"))))
 
+(defn date-relative-string [d]
+  (let [diff-sec
+        (long (/ (- (c/to-long
+                     (f/parse (f/formatter "yyyy-MM-dd HH:mm:ss") d)) (c/to-long (t/to-time-zone (t/now) (t/time-zone-for-offset 0)))) 1000))]
+    (cond (<= diff-sec 10) "a few seconds ago"
+          (<= diff-sec 60) (str diff-sec " seconds ago")
+          :else d)diff-sec))
+
+(date-relative-string "2014-09-16 14:21:30")
+(f/parse (f/formatter "yyyy-MM-dd HH:mm:ss") "2014-09-16 16:21:30")
+(t/to-time-zone (t/now) (t/time-zone-for-offset 0))
+
 (defn get-xmr-trade-history []
   (log/info "called get xmr ticker webservice PROD")
   (defn sort-by-date [m]
     (sort-by #(vec (map % "date")) m))
-  (comment (defn date-human-readable [m]
+  (defn date-human-readable [m]
      (map (fn [i]
             (update-in i ["date"]
                        (fn [a]
-                         (.fromNow
-                          (.tz js/moment a "YYYY-MM-DD hh:mm:ss" "Etc/UTC"))))) m)))
+                          (date-relative-string a)
+                         (comment (.fromNow
+                           (.tz js/moment a "YYYY-MM-DD hh:mm:ss" "Etc/UTC")))))) m))
   (http/get "https://poloniex.com/public?command=returnTradeHistory&currencyPair=BTC_XMR"
             (fn [{:keys [status headers body error]}]
-              (take 20 (sort-by-date (json/read-str body))))))
+              (take 20 (sort-by-date (date-human-readable (json/read-str body)))))))
 
+(println @(get-xmr-trade-history))
 
 (defn get-xmr-chart-history [start, end, period]
   (log/info "called get xmr ticker webservice PROD")
@@ -44,7 +59,6 @@
 
 (defn get-xmr-all []  {"ticker" @(get-xmr-ticker) "history" @(get-xmr-trade-history)})
 
-(println @(get-xmr-trade-history))
 
 (defn get-xmr-all-test []
   (log/info "called get xmr all webservice TEST")
