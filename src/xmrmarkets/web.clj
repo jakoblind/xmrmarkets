@@ -24,14 +24,18 @@
 
 (defn date-relative-string [d]
   (let [diff-sec
-        (long (/ (- (c/to-long
-                     (f/parse (f/formatter "yyyy-MM-dd HH:mm:ss") d)) (c/to-long (t/to-time-zone (t/now) (t/time-zone-for-offset 0)))) 1000))]
+        (long (/ (- (c/to-long (t/to-time-zone (t/now) (t/time-zone-for-offset 0))) (c/to-long (f/parse (f/formatter "yyyy-MM-dd HH:mm:ss") d))) 1000))]
     (cond (<= diff-sec 10) "a few seconds ago"
-          (<= diff-sec 60) (str diff-sec " seconds ago")
-          :else d)diff-sec))
+          (< diff-sec 60) (str diff-sec " seconds ago")
+          (< diff-sec 120) "1 minute ago"
+          (<= diff-sec (* 60 60)) (str (long (/ diff-sec 60)) " minutes ago")
+          (< diff-sec (* 60 60 2)) "1 hour ago"
+          (<= diff-sec (* 60 60 12)) (str (long (/ diff-sec (* 60 60))) " hours ago")
+          (<= diff-sec (* 60 60 24)) "yesterday"
+          :else d)))
 
-(date-relative-string "2014-09-16 14:21:30")
-(f/parse (f/formatter "yyyy-MM-dd HH:mm:ss") "2014-09-16 16:21:30")
+(date-relative-string "2014-09-16 01:28:30")
+(f/parse (f/formatter "yyyy-MM-dd HH:mm:ss") "2014-09-16 17:24:30")
 (t/to-time-zone (t/now) (t/time-zone-for-offset 0))
 
 (defn get-xmr-trade-history []
@@ -41,13 +45,10 @@
   (defn date-human-readable [m]
      (map (fn [i]
             (update-in i ["date"]
-                       (fn [a]
-                          (date-relative-string a)
-                         (comment (.fromNow
-                           (.tz js/moment a "YYYY-MM-DD hh:mm:ss" "Etc/UTC")))))) m))
+                       date-relative-string)) m))
   (http/get "https://poloniex.com/public?command=returnTradeHistory&currencyPair=BTC_XMR"
             (fn [{:keys [status headers body error]}]
-              (take 20 (sort-by-date (date-human-readable (json/read-str body)))))))
+              (date-human-readable (take 20 (sort-by-date (json/read-str body)))))))
 
 (println @(get-xmr-trade-history))
 
