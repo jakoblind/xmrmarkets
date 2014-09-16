@@ -42,9 +42,14 @@
      (map (fn [i]
             (update-in i ["date"]
                        date-relative-string)) m))
+  (defn reduce-xmr-size [m]
+    (java.util.Locale/setDefault (java.util.Locale/US))
+    (map (fn [i]
+           (update-in i ["amount"]
+                      (fn [a] (.format (new java.text.DecimalFormat "#.####")  (read-string a))))) m))
   (http/get "https://poloniex.com/public?command=returnTradeHistory&currencyPair=BTC_XMR"
             (fn [{:keys [status headers body error]}]
-              (date-human-readable (take 20 (sort-by-date (json/read-str body)))))))
+              (reduce-xmr-size (date-human-readable (take 20 (sort-by-date (json/read-str body))))))))
 
 (println @(get-xmr-trade-history))
 
@@ -79,10 +84,17 @@
   (html5
    [:head
     [:title (str ((@latest-xmr-ticker "ticker") "last") " BTC/XMR")]]
-   [:body [:div#pricecontainer[:div#main[:div.ticker
-                       [:div.ticker-price
-                        (get (get @latest-xmr-ticker "ticker") "last")]
-                       [:div.ticker-currency "BTC/XMR"]]]]
+   [:body [:div#pricecontainer
+           [:div#main
+            [:div.ticker
+             [:div.ticker-price
+              (get (get @latest-xmr-ticker "ticker") "last")] [:div.ticker-currency "BTC/XMR"]]
+            [:div.history-container
+             (map (fn [item]
+                    [:div.history-item
+                     [:div.history-item-xmr (item "amount")]
+                     [:div.history-item-time (item "date")]
+                     [:div.history-item-price (item "rate")]]) (@latest-xmr-ticker "history"))]]]
     [:div#chartarea
      [:div#chart-control]
      [:div#chartcontainer[:div#chart]]]

@@ -13,6 +13,23 @@ body {
     clear:both;
 }
 
+.history-item-xmr {
+    width: 30%;
+    float:left;
+    display:block;
+}
+
+.history-item-time {
+    width: 40%;
+    float:left;
+    display:block;
+}
+.history-item-price {
+    width: 30%;
+    float:left;
+    display:block;
+}
+
 .ticker {
 }
 
@@ -36,7 +53,6 @@ body {
 .selected-period {
     font-weight: bold;
 }
-
 #pricecontainer {
     display: block;
     float:left;
