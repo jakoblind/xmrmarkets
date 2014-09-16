@@ -20,8 +20,9 @@
 
 (q/defcomponent HistoryItem [h]
   (d/div {:className "history-item "  }
-         (h "amount") "  " (h "date") " " (h "rate") " "
-         (d/i {:className (str "fa fa-caret-" (h "up-down") " " (h "up-down") )})))
+         (d/div {:className "history-item-xmr"} (h "amount"))
+         (d/div {:className "history-item-time"} (h "date"))
+         (d/div {:className "history-item-price"} (h "rate") " " (d/i {:className (str "fa fa-caret-" (h "up-down") " " (h "up-down") )}))))
 
 (q/defcomponent History [h]
   (apply d/div {:className "history-container"}

@@ -14,7 +14,7 @@ body {
 }
 
 .history-item-xmr {
-    width: 30%;
+    width: 25%;
     float:left;
     display:block;
 }
@@ -25,7 +25,7 @@ body {
     display:block;
 }
 .history-item-price {
-    width: 30%;
+    width: 35%;
     float:left;
     display:block;
 }
@@ -34,13 +34,14 @@ body {
 }
 
 .ticker-price {
-    font-size: 40px;
+    font-size: 50px;
+    font-weight: bold;
     display:block;
     float:left;
 }
 
 .ticker-currency {
-    margin-top:19px;
+    margin-top:34px;
     margin-left:5px;
     display:block;
     float:left;
