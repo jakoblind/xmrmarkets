@@ -43,7 +43,6 @@
             (update-in i ["date"]
                        date-relative-string)) m))
   (defn reduce-xmr-size [m]
-    (java.util.Locale/setDefault (java.util.Locale/US))
     (map (fn [i]
            (update-in i ["amount"]
                       (fn [a] (.format (new java.text.DecimalFormat "#.####")  (read-string a))))) m))

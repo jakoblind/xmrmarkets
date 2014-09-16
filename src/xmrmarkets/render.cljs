@@ -51,7 +51,6 @@
          {:handler chart-ajax-handler})))
 
 (q/defcomponent ChartControlItem [selected-period period]
-  (println selected-period)
   (d/a {:className (str "chartmenu " (when (= selected-period period) "selected-period"))
         :onClick (on-chart-period-click period)} (str period " ")))
 
