@@ -47,6 +47,15 @@ body {
     float:left;
 }
 
+#chart-control {
+    margin-top: 33px;
+    margin-left: 52px;
+}
+
+#chart {
+    margin-top: -3px;
+}
+
 .chartmenu {
     cursor: pointer;
 }
