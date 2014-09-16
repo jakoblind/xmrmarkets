@@ -34,10 +34,6 @@
           (<= diff-sec (* 60 60 24)) "yesterday"
           :else d)))
 
-(date-relative-string "2014-09-16 01:28:30")
-(f/parse (f/formatter "yyyy-MM-dd HH:mm:ss") "2014-09-16 17:24:30")
-(t/to-time-zone (t/now) (t/time-zone-for-offset 0))
-
 (defn get-xmr-trade-history []
   (log/info "called get xmr ticker webservice PROD")
   (defn sort-by-date [m]

@@ -25,7 +25,6 @@
 
 (q/defcomponent History [h]
   (apply d/div {:className "history-container"}
-
          (defn add-down-up [v i]
            (let [up-down (if (= (first v) null) "" (if (>= (i "rate") ((first v) "rate")) "up" "down"))]
              (cons (assoc i "up-down" up-down) v)))
