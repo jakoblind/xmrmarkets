@@ -25,18 +25,11 @@
 
 (q/defcomponent History [h]
   (apply d/div {:className "history-container"}
-         (defn sort-by-date [m]
-           (sort-by #(vec (map % "date")) m))
-         (defn date-human-readable [m]
-           (map (fn [i]
-                  (update-in i ["date"]
-                             (fn [a]
-                               (.fromNow
-                                (.tz js/moment a "YYYY-MM-DD hh:mm:ss" "Etc/UTC"))))) m))
+
          (defn add-down-up [v i]
            (let [up-down (if (= (first v) null) "" (if (>= (i "rate") ((first v) "rate")) "up" "down"))]
              (cons (assoc i "up-down" up-down) v)))
-         (let [sort (reduce add-down-up [] (reverse (date-human-readable h)))]
+         (let [sort (reduce add-down-up [] (reverse h))]
            (map HistoryItem sort))))
 
 (q/defcomponent PriceInfo [d]
