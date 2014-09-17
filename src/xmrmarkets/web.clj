@@ -135,6 +135,8 @@
   (GET "/a/ws" [] (-> ws-handler
                     (wrap-websocket-handler {:format :edn}))))
 
+(defonce server (atom nil))
+
 (defn -main [& args]
   (let [[options args banner]
         (cli args
@@ -145,6 +147,15 @@
           (println banner)
           (System/exit 0))
     (let [handler (if in-dev? (reload/wrap-reload (site #'routes)) (site routes))]
-      (run-server handler {:port 8080})
+      (reset! server (run-server handler {:port 8080}))
       (update-ticker)
       (log/info "server started"))))
+
+(defn stop-server []
+  (when-not (nil? @server)
+    (@server :timeout 100)
+    (reset! server nil)))
+
+(defn reset []
+  (stop-server)
+  (main-))
