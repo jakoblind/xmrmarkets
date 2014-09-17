@@ -16,6 +16,8 @@
             [hiccup.page :refer [html5 include-js include-css]]
             [clojure.core.async :refer [<! >! put! close! go go-loop timeout]])(:gen-class))
 
+(defonce server (atom nil))
+
 (defn get-xmr-ticker []
   (log/info "called get xmr ticker webservice PROD")
   (http/get "https://poloniex.com/public?command=returnTicker"
@@ -72,7 +74,7 @@
 (def latest-xmr-ticker (atom (get-xmr-all)))
 
 (defn update-ticker [] (future
-                         (while true
+                         (while (= @server nil)
                            (reset! latest-xmr-ticker (get-xmr-all))
                            (Thread/sleep 60000))))
 
@@ -81,7 +83,7 @@
   (go-loop []
     (>! ws-channel @latest-xmr-ticker)
     (<! (timeout 1000))
-    (recur)))
+    (when (not @server) nil (recur))))
 
 (defn page-frame []
   (html5
@@ -121,7 +123,6 @@
                      "2w" (list (time-minus (t/weeks 2)) 9999999999 14400)
                      "1m" (list (time-minus (t/months 1)) 9999999999 14400)
                      "all" (list (time-minus (t/years 5)) 9999999999 86400)})
-;300, 900, 1800, 7200, 14400, and 8640
 
 (defn chart [period]
   {:status  200
@@ -134,8 +135,6 @@
   (GET "/a/chart/:period/" [period] (chart period))
   (GET "/a/ws" [] (-> ws-handler
                     (wrap-websocket-handler {:format :edn}))))
-
-(defonce server (atom nil))
 
 (defn -main [& args]
   (let [[options args banner]
