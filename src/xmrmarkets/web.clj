@@ -48,7 +48,11 @@
                       (fn [a] (.format (new java.text.DecimalFormat "#.####")  (read-string a))))) m))
   (http/get "https://poloniex.com/public?command=returnTradeHistory&currencyPair=BTC_XMR"
             (fn [{:keys [status headers body error]}]
-              (reduce-xmr-size (date-human-readable (take 20 (sort-by-date (json/read-str body))))))))
+              (->> (json/read-str body)
+                   (sort-by-date)
+                   (take 20)
+                   (date-human-readable)
+                   (reduce-xmr-size )))))
 
 (println @(get-xmr-trade-history))
 
