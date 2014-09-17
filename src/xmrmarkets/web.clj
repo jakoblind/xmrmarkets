@@ -158,4 +158,4 @@
 
 (defn reset []
   (stop-server)
-  (main-))
+  (-main))
