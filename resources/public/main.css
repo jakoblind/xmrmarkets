@@ -72,6 +72,21 @@ a {
     margin-left: 152px;
 }
 
+#market-menu {
+    float:right;
+    display:block;
+    margin-top:-25px;
+    font-family: "Futura";
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    color: #000;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
 #chart {
     margin-top: -3px;
 }

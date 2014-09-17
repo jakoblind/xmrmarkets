@@ -102,6 +102,7 @@
                      [:div.history-item-price (item "rate")]]) (@latest-xmr-ticker "history"))]]]
     [:div#chartarea
      [:div#chart-control]
+     [:div#market-menu "poloniex"]
      [:div#chartcontainer[:div#chart]]]
     (include-css "font-awesome-4.2.0/css/font-awesome.min.css")
     (include-css "main.css")
