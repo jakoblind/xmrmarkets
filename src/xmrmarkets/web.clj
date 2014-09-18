@@ -94,22 +94,23 @@
   (html5
    [:head
     [:title (str ((@latest-xmr-ticker "ticker") "last") " BTC/XMR")]]
-   [:body [:div#pricecontainer
-           [:div#main
-            [:div.ticker
-             [:div.ticker-price
-              (get (get @latest-xmr-ticker "ticker") "last")] [:div.ticker-currency "BTC/XMR"]]
-            [:div.history-container
-             (map (fn [item]
-                    [:div.history-item
-                     [:div.history-item-xmr (item "amount")]
-                     [:div.history-item-time (item "date")]
-                     [:div.history-item-price (item "rate")]
-                     [:div.history-item-updown [:i {:class (str "fa fa-caret-" (item "up-down") " " (item "up-down"))}]]]) (take 23 (@latest-xmr-ticker "history")))]]]
+   [:body
+    [:div.container
+    [:div#menucontainer
+           [:div#tickercontainer [:div.ticker [:div.ticker-price (get (get @latest-xmr-ticker "ticker") "last")] [:div.ticker-currency "BTC/XMR"]]]
+           [:div#chart-control "24h 12h 22d"]
+           [:div#market-menu "poloniex"]]
+    [:div#pricecontainer
+              [:div#main
+               [:div.history-container
+                (map (fn [item]
+                       [:div.history-item
+                        [:div.history-item-xmr (item "amount")]
+                        [:div.history-item-time (item "date")]
+                        [:div.history-item-price (item "rate")]
+                        [:div.history-item-updown [:i {:class (str "fa fa-caret-" (item "up-down") " " (item "up-down"))}]]]) (take 23 (@latest-xmr-ticker "history")))]]]
     [:div#chartarea
-     [:div#chart-control]
-     [:div#market-menu "poloniex"]
-     [:div#chartcontainer[:div#chart]]]
+     [:div#chartcontainer[:div#chart]]]]
     (include-css "font-awesome-4.2.0/css/font-awesome.min.css")
     (include-css "main.css")
     (include-js "react.js")

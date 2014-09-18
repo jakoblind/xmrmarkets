@@ -8,15 +8,9 @@
 
 (.add (.-tz js/moment) "Etc/UTC|UTC|0|0|")
 
-(q/defcomponent TickerCurrency []
-  (d/div {:className "ticker-currency"} "BTC/XMR"))
-
-(q/defcomponent TickerPrice [t]
-  (d/div {:className "ticker-price"} t))
-
 (q/defcomponent Ticker [t]
   (d/div {:className "ticker"}
-         (TickerPrice t) (TickerCurrency)))
+         (d/div {:className "ticker-price"} t) (d/div {:className "ticker-currency"} "BTC/XMR")))
 
 (q/defcomponent HistoryItem [h]
   (d/div {:className "history-item "  }
@@ -28,12 +22,6 @@
 (q/defcomponent History [h]
   (apply d/div {:className "history-container"}
            (map HistoryItem (take 23 h))))
-
-(q/defcomponent PriceInfo [d]
-  (d/div {}
-         (Ticker ((d "ticker") "last"))
-         (History (d "history"))))
-
 
 (def periodlist (list "6h" "24h" "2d" "4d" "1w" "2w" "1m" "all"))
 
@@ -64,9 +52,11 @@
 
 (go
    (let [server-ch (<! (ws-ch "ws://localhost:8080/a/ws"{:format :edn}))
-         container (.getElementById js/document "main")]
+         pricecontainer (.getElementById js/document "pricecontainer")
+         tickercontainer (.getElementById js/document "tickercontainer")]
      (go-loop []
        (when-let [d (:message (<! server-ch))]
          (set! (.-title js/document) (str ((d "ticker") "last") " BTC/XMR"))
-         (q/render (PriceInfo d) container)
+         (q/render (History (d "history")) pricecontainer)
+         (q/render (Ticker ((d "ticker") "last")) tickercontainer)
          (recur)))))
