@@ -8,7 +8,7 @@
             [clj-time.core :as t]
             [clj-time.coerce :as c]
             [clj-time.format :as f]
-            [compojure.core :refer [defroutes GET]]
+            [compojure.core :refer [defroutes GET context]]
             [compojure.route :refer [resources]]
             [chord.http-kit :refer [wrap-websocket-handler]]
             [clojure.tools.cli :refer [cli]]
@@ -41,17 +41,18 @@
   (go-loop []
     (>! ws-channel @latest-xmr-ticker)
     (<! (timeout 1000))
-    (when (not @server) nil (recur))))
+    (when (not (= @server nil)) (recur))))
 
 (defroutes routes
   (resources "/a/")
-  (GET "/a/" []
-       (response (page/page-frame
+  (context "/a" []
+           (GET "/" []
+                (response (page/page-frame
                            ((@latest-xmr-ticker "ticker") "last") (take 23 (@latest-xmr-ticker "history")))))
-  (GET "/a/chart/:period/" [period]
-       (page/json (@cache-xmr-history period)))
-  (GET "/a/ws" [] (-> ws-handler
-                    (wrap-websocket-handler {:format :edn}))))
+           (GET "/chart/:period/" [period]
+                (page/json (@cache-xmr-history period)))
+           (GET "/ws" [] (-> ws-handler
+                               (wrap-websocket-handler {:format :edn})))))
 
 (defn -main [& args]
   (let [[options args banner]
