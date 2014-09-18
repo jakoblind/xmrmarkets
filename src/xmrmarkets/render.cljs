@@ -31,7 +31,7 @@
            (let [up-down (if (= (first v) null) "" (if (>= (i "rate") ((first v) "rate")) "up" "down"))]
              (cons (assoc i "up-down" up-down) v)))
          (let [sort (reduce add-down-up [] (reverse h))]
-           (map HistoryItem sort))))
+           (map HistoryItem (take 19 sort)))))
 
 (q/defcomponent PriceInfo [d]
   (d/div {}
@@ -57,7 +57,8 @@
         :onClick (on-chart-period-click period)} (str period " ")))
 
 (q/defcomponent ChartControl [selected-period]
-  (apply d/div {}  (map (fn [in] (ChartControlItem selected-period in)) periodlist)))
+  (apply d/div {}
+         (map (fn [in] (ChartControlItem selected-period in)) periodlist)))
 
 (enable-console-print!)
 
