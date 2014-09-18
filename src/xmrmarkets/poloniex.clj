@@ -2,6 +2,8 @@
   (:require [xmrmarkets.daterelative :refer [date-relative-string]]
             [clojure.data.json :as json]
             [org.httpkit.client :as http]
+            [clj-time.coerce :as c]
+            [clj-time.core :as t]
             [clojure.tools.logging :as log]))
 
 (defn get-xmr-ticker []
@@ -36,10 +38,22 @@
                    (reverse)
                    (reduce add-down-up [])))))
 
-(defn get-xmr-chart-history [start, end, period]
-  (log/info "called get xmr ticker webservice PROD")
-  (http/get (str "https://poloniex.com/public?command=returnChartData&currencyPair=BTC_XMR&start=" start "&end=" end "&period=" period)
-            (fn [{:keys [status headers body error]}]
-              body)))
+(defn- time-minus [amount] (long (/ (c/to-long (t/minus (t/now) amount)) 1000)))
+
+(defn periodmap [] {
+                     "6h" (lazy-seq (list (time-minus (t/hours 6)) 9999999999 1800))
+                     "24h" (lazy-seq (list (time-minus (t/hours 24)) 9999999999 7200))
+                     "2d" (lazy-seq (list (time-minus (t/days 2)) 9999999999 7200))
+                     "4d" (lazy-seq (list (time-minus (t/days 4)) 9999999999 7200))
+                     "1w" (lazy-seq (list (time-minus (t/weeks 1)) 9999999999 14400))
+                     "2w" (lazy-seq (list (time-minus (t/weeks 2)) 9999999999 14400))
+                     "1m" (lazy-seq (list (time-minus (t/months 1)) 9999999999 14400))
+                     "all" (lazy-seq (list (time-minus (t/years 5)) 9999999999 86400))})
+
+(defn get-xmr-chart-history [period]
+  (let [[start end period] ((periodmap) period)]
+       (log/info "called get xmr ticker webservice PROD")
+       (http/get (str "https://poloniex.com/public?command=returnChartData&currencyPair=BTC_XMR&start=" start "&end=" end "&period=" period)
+                 (fn [{:keys [status headers body error]}] body))))
 
 (defn get-xmr-all []  {"ticker" @(get-xmr-ticker) "history" @(get-xmr-trade-history)})

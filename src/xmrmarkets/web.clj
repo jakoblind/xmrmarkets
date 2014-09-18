@@ -20,10 +20,21 @@
 
 (defonce latest-xmr-ticker (atom (poloniex/get-xmr-all)))
 
-(defn update-ticker [] (future
+(defn all-xmr-history []
+  (reduce #(assoc %1 %2 @(poloniex/get-xmr-chart-history %2)) {}(keys (poloniex/periodmap))))
+
+(defonce cache-xmr-history (atom (all-xmr-history)))
+
+(defn update-ticker-loop [] (future
                          (while (not (= @server nil))
                            (reset! latest-xmr-ticker (poloniex/get-xmr-all))
                            (Thread/sleep 60000))))
+
+(defn update-history-loop [] (future
+                         (while (not (= @server nil))
+                           (reset! cache-xmr-history (all-xmr-history))
+                           (Thread/sleep 60000))))
+
 
 (defn ws-handler [{:keys [ws-channel] :as req}]
   (println "Opened connection from" (:remote-addr req))
@@ -38,7 +49,7 @@
        (response (page/page-frame
                            ((@latest-xmr-ticker "ticker") "last") (take 23 (@latest-xmr-ticker "history")))))
   (GET "/a/chart/:period/" [period]
-       (page/chart period))
+       (page/json (@cache-xmr-history period)))
   (GET "/a/ws" [] (-> ws-handler
                     (wrap-websocket-handler {:format :edn}))))
 
@@ -53,7 +64,8 @@
           (System/exit 0))
     (let [handler (if in-dev? (reload/wrap-reload (site #'routes)) (site routes))]
       (reset! server (run-server handler {:port 8080}))
-      (update-ticker)
+      (update-ticker-loop)
+      (update-history-loop)
       (log/info "server started"))))
 
 (defn stop-server []

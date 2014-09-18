@@ -1,7 +1,6 @@
 (ns xmrmarkets.page (:require
                      [clj-time.core :as t]
                      [clj-time.coerce :as c]
-                     [xmrmarkets.poloniex :as poloniex]
                      [hiccup.page :refer [html5 include-js include-css]]))
 
 (defn page-frame [price history]
@@ -36,20 +35,7 @@
     (include-js "moment-timezone.js")
     (include-js "app.js")]))
 
-
-(defn- time-minus [amount] (long (/ (c/to-long (t/minus (t/now) amount)) 1000)))
-
-(defn- periodmap [] {
-                     "6h" (list (time-minus (t/hours 6)) 9999999999 1800)
-                     "24h" (list (time-minus (t/hours 24)) 9999999999 7200)
-                     "2d" (list (time-minus (t/days 2)) 9999999999 7200)
-                     "4d" (list (time-minus (t/days 4)) 9999999999 7200)
-                     "1w" (list (time-minus (t/weeks 1)) 9999999999 14400)
-                     "2w" (list (time-minus (t/weeks 2)) 9999999999 14400)
-                     "1m" (list (time-minus (t/months 1)) 9999999999 14400)
-                     "all" (list (time-minus (t/years 5)) 9999999999 86400)})
-
-(defn chart [period]
+(defn json [content]
   {:status  200
    :headers {"Content-Type" "text/json"}
-   :body    @(apply poloniex/get-xmr-chart-history ((periodmap) period))})
+   :body    content})
