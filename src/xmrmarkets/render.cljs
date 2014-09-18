@@ -27,11 +27,7 @@
 
 (q/defcomponent History [h]
   (apply d/div {:className "history-container"}
-         (defn add-down-up [v i]
-           (let [up-down (if (= (first v) null) "" (if (>= (i "rate") ((first v) "rate")) "up" "down"))]
-             (cons (assoc i "up-down" up-down) v)))
-         (let [sort (reduce add-down-up [] (reverse h))]
-           (map HistoryItem (take 19 sort)))))
+           (map HistoryItem (take 23 h))))
 
 (q/defcomponent PriceInfo [d]
   (d/div {}
@@ -67,10 +63,10 @@
 (GET (str "chart/24h/") {:handler chart-ajax-handler})
 
 (go
-  (let [server-ch (<! (ws-ch "ws://jakoblind.se/xmr/ws"{:format :edn}))
-        container (.getElementById js/document "main")]
-    (go-loop []
-      (when-let [d (:message (<! server-ch))]
-        (set! (.-title js/document) (str ((d "ticker") "last") " BTC/XMR"))
-        (q/render (PriceInfo d) container)
-        (recur)))))
+   (let [server-ch (<! (ws-ch "ws://localhost:8080/a/ws"{:format :edn}))
+         container (.getElementById js/document "main")]
+     (go-loop []
+       (when-let [d (:message (<! server-ch))]
+         (set! (.-title js/document) (str ((d "ticker") "last") " BTC/XMR"))
+         (q/render (PriceInfo d) container)
+         (recur)))))

@@ -38,6 +38,10 @@
 
 (defn get-xmr-trade-history []
   (log/info "called get xmr ticker webservice PROD")
+  (defn todouble [in] (read-string in))
+  (defn add-down-up [v i]
+    (let [up-down (if (= (first v) nil) "" (if (>= (todouble (i "rate")) (todouble ((first v) "rate"))) "up" "down"))]
+      (cons (assoc i "up-down" up-down) v)))
   (defn sort-by-date [m]
     (sort-by #(vec (map % "date")) m))
   (defn date-human-readable [m]
@@ -52,9 +56,11 @@
             (fn [{:keys [status headers body error]}]
               (->> (json/read-str body)
                    (sort-by-date)
-                   (take 20)
+                   (take 26)
                    (date-human-readable)
-                   (reduce-xmr-size )))))
+                   (reduce-xmr-size )
+                   (reverse)
+                   (reduce add-down-up [])))))
 
 (println @(get-xmr-trade-history))
 
@@ -65,7 +71,6 @@
               body)))
 
 (defn get-xmr-all []  {"ticker" @(get-xmr-ticker) "history" @(get-xmr-trade-history)})
-
 
 (defn get-xmr-all-test []
   (log/info "called get xmr all webservice TEST")
@@ -99,7 +104,8 @@
                     [:div.history-item
                      [:div.history-item-xmr (item "amount")]
                      [:div.history-item-time (item "date")]
-                     [:div.history-item-price (item "rate")]]) (@latest-xmr-ticker "history"))]]]
+                     [:div.history-item-price (item "rate")]
+                     [:div.history-item-updown [:i {:class (str "fa fa-caret-" (item "up-down") " " (item "up-down"))}]]]) (take 23 (@latest-xmr-ticker "history")))]]]
     [:div#chartarea
      [:div#chart-control]
      [:div#market-menu "poloniex"]
