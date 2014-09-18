@@ -98,8 +98,8 @@
     [:div.container
     [:div#menucontainer
            [:div#tickercontainer [:div.ticker [:div.ticker-price (get (get @latest-xmr-ticker "ticker") "last")] [:div.ticker-currency "BTC/XMR"]]]
-           [:div#chart-control "24h 12h 22d"]
-           [:div#market-menu "poloniex"]]
+           [:div#chart-control  {:class "menu"} (str "6h " "24h " "2d " "4d " "1w " "2w " "1m " "all ")]
+           [:div#market-menu {:class "menu selected-menu"} "poloniex"]]
     [:div#pricecontainer
               [:div#main
                [:div.history-container

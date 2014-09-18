@@ -9,7 +9,7 @@ body {
 }
 
 #menucontainer {
-    height:70px;
+    height:65px;
 }
 
 .ticker{
@@ -29,6 +29,22 @@ body {
     float:left;
 }
 
+.menu {
+    font-family: "Futura";
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    color: gray;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.selected-menu {
+    font-weight: bold;
+    color:black;
+}
 
 #chart-control {
     padding-top: 32px;
@@ -42,28 +58,6 @@ body {
     float:right;
     display:block;
     margin-top:-25px;
-    font-family: "Futura";
-    font-size: 18px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    color: #000;
-    white-space: nowrap;
-    text-decoration: none;
-}
-
-a {
-    font-family: "Futura";
-    font-size: 18px;
-    font-weight: 500;
-    text-transform: uppercase;
-    opacity: 0.6;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    color: #000;
-    white-space: nowrap;
-    text-decoration: none;
 }
 
 .up {
@@ -107,10 +101,6 @@ a {
     cursor: pointer;
 }
 
-.selected-period {
-    font-weight: bold;
-    opacity: 1;
-}
 #pricecontainer {
     width:333px;
     display: block;

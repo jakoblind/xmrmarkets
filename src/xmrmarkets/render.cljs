@@ -37,7 +37,7 @@
          {:handler chart-ajax-handler})))
 
 (q/defcomponent ChartControlItem [selected-period period]
-  (d/a {:className (str "chartmenu " (when (= selected-period period) "selected-period"))
+  (d/a {:className (str "chartmenu " (when (= selected-period period) "selected-menu"))
         :onClick (on-chart-period-click period)} (str period " ")))
 
 (q/defcomponent ChartControl [selected-period]
@@ -46,9 +46,9 @@
 
 (enable-console-print!)
 
-(render-chart-control "24h")
+(render-chart-control "4d")
 
-(GET (str "chart/24h/") {:handler chart-ajax-handler})
+(GET (str "chart/4d/") {:handler chart-ajax-handler})
 
 (go
    (let [server-ch (<! (ws-ch "ws://localhost:8080/a/ws"{:format :edn}))
