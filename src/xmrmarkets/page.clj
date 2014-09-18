@@ -37,5 +37,5 @@
 
 (defn json [content]
   {:status  200
-   :headers {"Content-Type" "text/json"}
+   :headers {"Content-Type" "text/html"}
    :body    content})
