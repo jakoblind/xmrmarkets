@@ -79,7 +79,7 @@
 (def latest-xmr-ticker (atom (get-xmr-all)))
 
 (defn update-ticker [] (future
-                         (while (= @server nil)
+                         (while (not (= @server nil))
                            (reset! latest-xmr-ticker (get-xmr-all))
                            (Thread/sleep 60000))))
 
