@@ -53,7 +53,7 @@
 
 (GET (str "chart/4d/") {:handler chart-ajax-handler})
 
-(.setTimeout js/window #((GET (str "chart/" @selected-chart-period "/") {:handler chart-ajax-handler})) 10000)
+(.setTimeout js/window #(GET (str "chart/" @selected-chart-period "/") {:handler chart-ajax-handler}) 10000)
 
 (go
    (let [server-ch (<! (ws-ch "ws://localhost:8080/a/ws"{:format :edn}))
