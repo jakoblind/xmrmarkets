@@ -1,6 +1,7 @@
 (ns xmrmarkets.web
   (:require [xmrmarkets.page :as page]
             [xmrmarkets.poloniex :as poloniex]
+            [xmrmarkets.config :refer [config]]
             [org.httpkit.server :refer [run-server]]
             [org.httpkit.client :as http]
             [ring.middleware.reload :as reload]
@@ -21,26 +22,26 @@
 (defonce latest-xmr-ticker (atom (poloniex/get-xmr-all)))
 
 (defn all-xmr-history []
-  (reduce #(assoc %1 %2 @(poloniex/get-xmr-chart-history %2)) {}(keys (poloniex/periodmap))))
+  (reduce #(assoc %1 %2 (:timestamp (c/to-long (t/now)) :history @(poloniex/get-xmr-chart-history %2))) {}(keys (poloniex/periodmap))))
 
 (defonce cache-xmr-history (atom (all-xmr-history)))
 
 (defn update-ticker-loop [] (future
                          (while (not (= @server nil))
                            (reset! latest-xmr-ticker (poloniex/get-xmr-all))
-                           (Thread/sleep 60000))))
+                           (Thread/sleep (:ticker-loop-interval config)))))
 
 (defn update-history-loop [] (future
                          (while (not (= @server nil))
                            (reset! cache-xmr-history (all-xmr-history))
-                           (Thread/sleep 60000))))
+                           (Thread/sleep (:ticker-loop-interval config)))))
 
 
 (defn ws-handler [{:keys [ws-channel] :as req}]
   (println "Opened connection from" (:remote-addr req))
   (go-loop []
     (>! ws-channel @latest-xmr-ticker)
-    (<! (timeout 1000))
+    (<! (timeout (:ticker-ws-loop-interval config)))
     (when (not (= @server nil)) (recur))))
 
 (defroutes routes
@@ -50,7 +51,7 @@
                 (response (page/page-frame
                            ((@latest-xmr-ticker "ticker") "last") (take 23 (@latest-xmr-ticker "history")))))
            (GET "/chart/:period/" [period]
-                (page/json (@cache-xmr-history period)))
+                (page/json (:history (@cache-xmr-history period))))
            (GET "/ws" [] (-> ws-handler
                                (wrap-websocket-handler {:format :edn})))))
 

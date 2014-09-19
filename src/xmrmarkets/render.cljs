@@ -3,12 +3,13 @@
           [cljs.core.async :refer [chan <! >! put! close! timeout]]
           [quiescent :as q :include-macros true]
           [ajax.core :refer [GET]]
+          [xmrmarkets.config :refer [config]]
           [quiescent.dom :as d])
 (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (.add (.-tz js/moment) "Etc/UTC|UTC|0|0|")
 
-(defonce selected-chart-period (atom "4d"))
+(defonce selected-chart-period (atom {:period "4d"}))
 
 (q/defcomponent Ticker [t]
   (d/div {:className "ticker"}
@@ -34,7 +35,7 @@
 
 (defn on-chart-period-click [period]
   (fn []
-    (reset! selected-chart-period period)
+    (reset! selected-chart-period {:period period})
     (render-chart-control period)
     (GET (str "chart/" period "/")
          {:handler chart-ajax-handler})))
@@ -49,18 +50,18 @@
 
 (enable-console-print!)
 
-(render-chart-control @selected-chart-period)
+(render-chart-control (:period @selected-chart-period))
 
-(defn refresh-chart []  (GET (str "chart/" @selected-chart-period "/") {:handler chart-ajax-handler}))
+(defn refresh-chart []  (GET (str "chart/" (:period @selected-chart-period) "/") {:handler chart-ajax-handler}))
 
-(defn loop-chart-update [] (.setTimeout js/window (fn [] (refresh-chart) (loop-chart-update)) 10000))
+(defn loop-chart-update [] (.setTimeout js/window (fn [] (refresh-chart) (loop-chart-update)) (:loop-chart-period config)))
 
 (refresh-chart)
 
 (loop-chart-update)
 
 (go
-   (let [server-ch (<! (ws-ch "ws://localhost:8080/a/ws"{:format :edn}))
+   (let [server-ch (<! (ws-ch (:ws-url config) {:format :edn}))
          pricecontainer (.getElementById js/document "pricecontainer")
          tickercontainer (.getElementById js/document "tickercontainer")]
      (go-loop []
