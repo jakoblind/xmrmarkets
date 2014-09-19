@@ -3,6 +3,9 @@ window.XMR = window.XMR || {};
 (function(){
     "use strict";
 
+    var colorup = "#30B6FF";
+    var colordown = "#FF7930";
+
     var width = 820;
     var height = 450;
 
@@ -123,7 +126,7 @@ window.XMR = window.XMR || {};
 	    .attr("y", function(d) {return y(max(d.open, d.close));})
 	    .attr("height", function(d) { return y(min(d.open, d.close))-y(max(d.open, d.close));})
 	    .attr("width", function(d) { return 0.5 * (width - (marginRight + marginLeft))/data.length; })
-	    .attr("fill",function(d) { return d.open > d.close ? "red" : "green" ;});
+	    .attr("fill",function(d) { return d.open > d.close ? colordown : colorup ;});
 
 	chart.selectAll("line.stem")
 	    .data(data)
@@ -133,7 +136,7 @@ window.XMR = window.XMR || {};
 	    .attr("x2", function(d) { return x(d.date) + 0.25 * (width - (marginRight + marginLeft))/ data.length;})
 	    .attr("y1", function(d) { return y(d.high);})
 	    .attr("y2", function(d) { return y(d.low); })
-	    .attr("stroke", function(d){ return d.open > d.close ? "red" : "green"; })
+	    .attr("stroke", function(d){ return d.open > d.close ? colordown : colorup; })
 
 
 //line

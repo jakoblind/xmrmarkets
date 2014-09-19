@@ -61,10 +61,10 @@ body {
 }
 
 .up {
-    color: green;
+    color: #30B6FF;
 }
 .down {
-    color: red;
+    color: #FF7930;
 }
 .history-container {
     clear:both;
