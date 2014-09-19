@@ -8,6 +8,8 @@
 
 (.add (.-tz js/moment) "Etc/UTC|UTC|0|0|")
 
+(defonce selected-chart-period (atom "4d"))
+
 (q/defcomponent Ticker [t]
   (d/div {:className "ticker"}
          (d/div {:className "ticker-price"} t) (d/div {:className "ticker-currency"} "BTC/XMR")))
@@ -32,6 +34,7 @@
 
 (defn on-chart-period-click [period]
   (fn []
+    (reset! selected-chart-period period)
     (render-chart-control period)
     (GET (str "chart/" period "/")
          {:handler chart-ajax-handler})))
@@ -46,9 +49,11 @@
 
 (enable-console-print!)
 
-(render-chart-control "4d")
+(render-chart-control @selected-chart-period)
 
 (GET (str "chart/4d/") {:handler chart-ajax-handler})
+
+(.setTimeout js/window #((GET (str "chart/" @selected-chart-period "/") {:handler chart-ajax-handler})) 10000)
 
 (go
    (let [server-ch (<! (ws-ch "ws://localhost:8080/a/ws"{:format :edn}))
