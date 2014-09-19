@@ -51,9 +51,13 @@
 
 (render-chart-control @selected-chart-period)
 
-(GET (str "chart/4d/") {:handler chart-ajax-handler})
+(defn refresh-chart []  (GET (str "chart/" @selected-chart-period "/") {:handler chart-ajax-handler}))
 
-(.setTimeout js/window #(GET (str "chart/" @selected-chart-period "/") {:handler chart-ajax-handler}) 10000)
+(defn loop-chart-update [] (.setTimeout js/window (fn [] (refresh-chart) (loop-chart-update)) 10000))
+
+(refresh-chart)
+
+(loop-chart-update)
 
 (go
    (let [server-ch (<! (ws-ch "ws://localhost:8080/a/ws"{:format :edn}))
