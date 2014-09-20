@@ -49,9 +49,11 @@
     (let [msg (:message (<! ws-channel))]
       (>! ws-channel
           {:ticker @latest-xmr-ticker
-           :chart-history (if (= (:ts msg) nil)
-                            (@cache-xmr-history (:period msg))
-                            nil)})
+           :chart-history (let [ts (:ts msg)
+                                cached-history (@cache-xmr-history (:period msg))]
+                            (cond (= ts nil) cached-history
+                                  (< ts (:timestamp cached-history)) cached-history
+                                  :else nil))})
       (<! (timeout (:ticker-ws-loop-interval config))))
     (when (not= @server nil) (recur))))
 
