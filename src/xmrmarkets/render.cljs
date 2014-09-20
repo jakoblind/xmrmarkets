@@ -52,21 +52,32 @@
 
 (render-chart-control (:period @selected-chart-period))
 
-(defn refresh-chart []  (GET (str "chart/" (:period @selected-chart-period) "/") {:handler chart-ajax-handler}))
+(defn refresh-chart []
+  (GET (str "chart/" (:period @selected-chart-period) "/") {:handler chart-ajax-handler}))
 
 (defn loop-chart-update [] (.setTimeout js/window (fn [] (refresh-chart) (loop-chart-update)) (:loop-chart-period config)))
 
-(refresh-chart)
+;;(refresh-chart)
 
-(loop-chart-update)
+;;(loop-chart-update)
+
+(defonce latest-updated-chart (atom nil))
 
 (go
    (let [server-ch (<! (ws-ch (:ws-url config) {:format :edn}))
          pricecontainer (.getElementById js/document "pricecontainer")
          tickercontainer (.getElementById js/document "tickercontainer")]
      (go-loop []
-       (when-let [d (:message (<! server-ch))]
-         (set! (.-title js/document) (str ((d "ticker") "last") " BTC/XMR"))
-         (q/render (History (d "history")) pricecontainer)
-         (q/render (Ticker ((d "ticker") "last")) tickercontainer)
+       (>! server-ch {:period (:period @selected-chart-period) :ts @latest-updated-chart})
+       (when-let [msg (:message (<! server-ch))]
+         (let [t (:ticker msg)
+               h (:chart-history msg)]
+           (when (not= h nil)
+             (let [ts (:timestamp h)
+                   chart (:history h)]
+               (reset! latest-updated-chart ts)
+               (.buildChart (.-XMR js/window) (.parse js/JSON (str chart)))))
+           (set! (.-title js/document) (str ((t "ticker") "last") " BTC/XMR"))
+           (q/render (History (t "history")) pricecontainer)
+           (q/render (Ticker ((t "ticker") "last")) tickercontainer))
          (recur)))))
