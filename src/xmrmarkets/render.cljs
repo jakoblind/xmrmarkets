@@ -31,7 +31,9 @@
 (defn chart-ajax-handler [response]
   (.buildChart (.-XMR js/window) (.parse js/JSON (str response))))
 
-(defn render-chart-control [selected-period] (q/render (ChartControl selected-period) (.getElementById js/document "chart-control")))
+(defn render-chart-control [selected-period]
+  (q/render (ChartControl selected-period)
+            (.getElementById js/document "chart-control")))
 
 (defn on-chart-period-click [period]
   (fn []
@@ -51,15 +53,6 @@
 (enable-console-print!)
 
 (render-chart-control (:period @selected-chart-period))
-
-(defn refresh-chart []
-  (GET (str "chart/" (:period @selected-chart-period) "/") {:handler chart-ajax-handler}))
-
-(defn loop-chart-update [] (.setTimeout js/window (fn [] (refresh-chart) (loop-chart-update)) (:loop-chart-period config)))
-
-;;(refresh-chart)
-
-;;(loop-chart-update)
 
 (defonce latest-updated-chart (atom nil))
 
