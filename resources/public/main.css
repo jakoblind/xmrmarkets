@@ -108,6 +108,17 @@ body {
 }
 
 #chartarea {
+    width:827px;
     display: block;
     float:left;
+}
+
+.center-icon {
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+}
+
+.margintop160 {
+    margin-top:160px;
 }

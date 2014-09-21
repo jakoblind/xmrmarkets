@@ -25,7 +25,8 @@
                          [:i {:class (str "fa fa-caret-" (item "up-down") " " (item "up-down"))}]]])
                      history)]]]
     [:div#chartarea
-     [:div#chartcontainer[:div#chart]]]]
+;<i class="fa fa-circle-o-notch fa-spin fa-5x"></i>
+     [:div#chartcontainer[:div#chart [:i {:id "loading" :class "margintop160 center-icon fa fa-circle-o-notch fa-spin fa-3x"}]]]]]
     (include-css "font-awesome-4.2.0/css/font-awesome.min.css")
     (include-css "main.css")
     (include-js "react.js")
