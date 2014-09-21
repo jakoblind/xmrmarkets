@@ -128,26 +128,5 @@ window.XMR = window.XMR || {};
             .attr("y1", function(d) { return y(d.high);})
             .attr("y2", function(d) { return y(d.low); })
             .attr("stroke", function(d){ return d.open > d.close ? colordown : colorup; })
-
-
-//line
-        /*var lineFunc = d3.svg.line()
-            .x(function(d) {
-                return x(d.date);
-            })
-            .y(function(d) {
-                return y(d.weightedAverage);
-            }).interpolate('basis');
-
-        chart.append('svg:path')
-            .attr('d', lineFunc(data))
-            .attr('stroke', 'blue')
-            .attr('stroke-width', 2)
-            .attr('fill', 'none');
-*/
-
     }
-
-//    w.XMR.buildChart(pd);
-
 })();
