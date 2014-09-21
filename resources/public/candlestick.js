@@ -16,16 +16,6 @@ window.XMR = window.XMR || {};
     function addLeadingZeros(input, max) {
         return ('0'+input).slice(-1 * max);
     }
-/*
-    var chartElem = document.getElementById("chart");
-    var chartContainerElem = document.getElementById("chartcontainer");
-    window.onresize = function() {
-        var aspect = chartElem.offsetWidth / chartElem.offsetHeight;
-        var targetWidth = window.outerWidth;
-        console.log("setting width" + targetWidth)
-        chartElem.style.width = targetWidth;
-        chartElem.style.height = Math.round(targetWidth / aspect);
-    };*/
 
     window.XMR.buildChart = function(data){
         var marginLines = 50;
