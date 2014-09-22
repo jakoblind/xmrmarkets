@@ -7,7 +7,6 @@
             [clojure.tools.logging :as log]))
 
 (defn get-xmr-ticker []
-  (log/info "called get xmr ticker webservice PROD")
   (let [url "https://poloniex.com/public?command=returnTicker"]
     (http/get url
               (fn [{:keys [status headers body error]}]
@@ -16,7 +15,6 @@
                   ((get (json/read-str body) "BTC_XMR") "last"))))))
 
 (defn get-xmr-trade-history []
-  (log/info "called get xmr ticker webservice PROD")
   (defn todouble [in] (read-string in))
   (defn add-down-up [v i]
     (let [up-down (if (= (first v) nil) "" (if (>= (todouble (i "rate")) (todouble ((first v) "rate"))) "up" "down"))]
@@ -58,7 +56,6 @@
 
 (defn get-xmr-chart-history [period]
   (let [[start end period] ((periodmap) period)]
-       (log/info "called get xmr ticker webservice PROD")
        (let [url "https://poloniex.com/public?command=returnChartData&currencyPair=BTC_XMR&start="]
          (http/get (str url start "&end=" end "&period=" period)
                    (fn [{:keys [status headers body error]}]
