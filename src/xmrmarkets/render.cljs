@@ -70,7 +70,7 @@
                    chart (:history h)]
                (reset! latest-updated-chart ts)
                (.buildChart (.-XMR js/window) (.parse js/JSON (str chart)))))
-           (set! (.-title js/document) (str (t "ticker")  " BTC/XMR"))
+           (set! (.-title js/document) (str ((t "ticker") "last") " BTC/XMR"))
            (q/render (History (t "history")) pricecontainer)
-           (q/render (Ticker (t "ticker")) tickercontainer))
+           (q/render (Ticker ((t "ticker") "last")) tickercontainer))
          (recur)))))
