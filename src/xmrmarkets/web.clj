@@ -39,7 +39,7 @@
 (defn update-ticker-loop [] (future
                          (while (not (= @server nil))
                            (let [t @(poloniex/get-xmr-ticker)]
-                             (if (not (empty? t))
+                             (if (not= (t nil))
                                (reset! latest-xmr-ticker t)))
                            (let [h @(poloniex/get-xmr-trade-history)]
                              (if (not (empty? h))
@@ -50,7 +50,6 @@
                          (while (not (= @server nil))
                            (reset! cache-xmr-history (all-xmr-history))
                            (Thread/sleep (:ticker-loop-interval config)))))
-
 
 (defn ws-handler [{:keys [ws-channel] :as req}]
   (println "Opened connection from" (:remote-addr req))
@@ -71,7 +70,7 @@
   (context "/a" []
            (GET "/" []
                 (response (page/page-frame
-                           (((latest-xmr-price) "ticker") "last") (take 23 ((latest-xmr-price) "history")))))
+                           ((latest-xmr-price) "ticker") (take 23 ((latest-xmr-price) "history")))))
            (GET "/chart/:period/" [period]
                 (page/json (:history (@cache-xmr-history period))))
            (GET "/ws" [] (-> ws-handler

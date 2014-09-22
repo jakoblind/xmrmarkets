@@ -11,8 +11,9 @@
   (let [url "https://poloniex.com/public?command=returnTicker"]
     (http/get url
               (fn [{:keys [status headers body error]}]
-                (if error (do (log/error (str "error calling ws " url " " error)) {})
-                    (get (json/read-str body) "BTC_XMR"))))))
+                (if error
+                  (do (log/error (str "error calling ws " url " " error)) nil)
+                  ((get (json/read-str body) "BTC_XMR") "last"))))))
 
 (defn get-xmr-trade-history []
   (log/info "called get xmr ticker webservice PROD")
@@ -33,14 +34,15 @@
   (let [url "https://poloniex.com/public?command=returnTradeHistory&currencyPair=BTC_XMR"]
     (http/get url
               (fn [{:keys [status headers body error]}]
-                (if error (do (log/error (str "error calling ws " url " " error)) {})
-                    (->> (json/read-str body)
-                         (sort-by-date)
-                         (take 26)
-                         (date-human-readable)
-                         (reduce-xmr-size )
-                         (reverse)
-                         (reduce add-down-up [])))))))
+                (if error
+                  (do (log/error (str "error calling ws " url " " error)) {})
+                  (->> (json/read-str body)
+                       (sort-by-date)
+                       (take 26)
+                       (date-human-readable)
+                       (reduce-xmr-size )
+                       (reverse)
+                       (reduce add-down-up [])))))))
 
 (defn- time-minus [amount] (long (/ (c/to-long (t/minus (t/now) amount)) 1000)))
 
@@ -62,5 +64,3 @@
                    (fn [{:keys [status headers body error]}]
                      (if error (do (log/error (str "error calling ws " url " " error)) {}))
                      body)))))
-
-(defn get-xmr-all []  {"ticker" @(get-xmr-ticker) "history" @(get-xmr-trade-history)})
