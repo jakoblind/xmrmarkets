@@ -32,7 +32,7 @@
 
 (q/defcomponent History [h]
   (apply d/div {:className "history-container"}
-           (map HistoryItem (take 23 h))))
+           (map HistoryItem (take 21 h))))
 
 (def periodlist (list "6h" "24h" "2d" "4d" "1w" "2w" "1m" "all"))
 

@@ -9,7 +9,7 @@ body {
 }
 
 #menucontainer {
-    height:65px;
+    height:61px;
 }
 
 .ticker{
@@ -27,6 +27,7 @@ body {
     margin-left:5px;
     display:block;
     float:left;
+    font-size: 13px;
 }
 
 .menu {
@@ -102,6 +103,7 @@ body {
 }
 
 #pricecontainer {
+    margin-top: 8px;
     width:333px;
     display: block;
     float:left;
