@@ -19,9 +19,13 @@
 
 (defonce server (atom nil))
 
-(defn nowms [] (c/to-long (t/now)))
+(defonce latest-xmr-ticker (atom @(poloniex/get-xmr-ticker)))
 
-(defonce latest-xmr-ticker (atom (poloniex/get-xmr-all)))
+(defonce latest-xmr-trade-history (atom @(poloniex/get-xmr-trade-history)))
+
+(defn latest-xmr-price [] {"ticker" @latest-xmr-ticker "history" @latest-xmr-trade-history})
+
+(defn nowms [] (c/to-long (t/now)))
 
 (defn all-xmr-history []
   (reduce
@@ -34,7 +38,10 @@
 
 (defn update-ticker-loop [] (future
                          (while (not (= @server nil))
-                           (reset! latest-xmr-ticker (poloniex/get-xmr-all))
+                           (let [t @(poloniex/get-xmr-ticker)]
+                             (when (not (empty? t))
+                               (reset! latest-xmr-ticker t)))
+                           (reset! latest-xmr-trade-history @(poloniex/get-xmr-trade-history))
                            (Thread/sleep (:ticker-loop-interval config)))))
 
 (defn update-history-loop [] (future
@@ -48,7 +55,7 @@
   (go-loop []
     (let [msg (:message (<! ws-channel))]
       (>! ws-channel
-          {:ticker @latest-xmr-ticker
+          {:ticker (latest-xmr-price)
            :chart-history (let [ts (:ts msg)
                                 cached-history (@cache-xmr-history (:period msg))]
                             (cond (= ts nil) cached-history
@@ -62,7 +69,7 @@
   (context "/a" []
            (GET "/" []
                 (response (page/page-frame
-                           ((@latest-xmr-ticker "ticker") "last") (take 23 (@latest-xmr-ticker "history")))))
+                           (((latest-xmr-price) "ticker") "last") (take 23 ((latest-xmr-price) "history")))))
            (GET "/chart/:period/" [period]
                 (page/json (:history (@cache-xmr-history period))))
            (GET "/ws" [] (-> ws-handler
