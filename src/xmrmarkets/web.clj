@@ -39,9 +39,11 @@
 (defn update-ticker-loop [] (future
                          (while (not (= @server nil))
                            (let [t @(poloniex/get-xmr-ticker)]
-                             (when (not (empty? t))
+                             (if (not (empty? t))
                                (reset! latest-xmr-ticker t)))
-                           (reset! latest-xmr-trade-history @(poloniex/get-xmr-trade-history))
+                           (let [h @(poloniex/get-xmr-trade-history)]
+                             (if (not (empty? h))
+                               (reset! latest-xmr-trade-history h)))
                            (Thread/sleep (:ticker-loop-interval config)))))
 
 (defn update-history-loop [] (future
