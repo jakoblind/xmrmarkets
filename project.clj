@@ -13,6 +13,7 @@
                  [clj-time "0.8.0"]
                  [cljs-ajax "0.2.6"]
                  [hiccup "1.0.4"]
+                 [prismatic/dommy "0.1.3"]
                  [org.clojure/tools.logging "0.3.0"]
                  [log4j "1.2.15" :exclusions [javax.mail/mail
                                               javax.jms/jms

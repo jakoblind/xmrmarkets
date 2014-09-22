@@ -4,14 +4,24 @@
           [quiescent :as q :include-macros true]
           [ajax.core :refer [GET]]
           [xmrmarkets.config :refer [config]]
+          [dommy.utils :as utils]
+          [dommy.core :as dommy]
           [quiescent.dom :as d])
+(:use-macros
+ [dommy.macros :only [node sel sel1]])
 (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (defonce selected-chart-period (atom {:period "4d"}))
 
+(defonce current-price (atom nil))
+
+(defn flash-color [colorclass] (let [tp (sel1 :#ticker-price)]
+                       (dommy/add-class! tp colorclass)
+                       (.setTimeout js/window #(dommy/remove-class! tp colorclass) 200)))
+
 (q/defcomponent Ticker [t]
   (d/div {:className "ticker"}
-         (d/div {:className "ticker-price"} t) (d/div {:className "ticker-currency"} "BTC/XMR")))
+         (d/div {:className "ticker-price" :id "ticker-price"} t) (d/div {:className "ticker-currency"} "BTC/XMR")))
 
 (q/defcomponent HistoryItem [h]
   (d/div {:className "history-item "  }
@@ -68,7 +78,12 @@
                    chart (:history h)]
                (reset! latest-updated-chart ts)
                (.buildChart (.-XMR js/window) (.parse js/JSON (str chart)))))
-           (set! (.-title js/document) (str (t "ticker") " BTC/XMR"))
-           (q/render (History (t "history")) pricecontainer)
-           (q/render (Ticker (t "ticker")) tickercontainer))
+           (let [price (t "ticker")]
+             (cond (= @current-price nil) nil
+                   (< @current-price price) (flash-color :up)
+                   (> @current-price price) (flash-color :down))
+             (reset! current-price price)
+             (set! (.-title js/document) (str price " BTC/XMR"))
+             (q/render (History (t "history")) pricecontainer)
+             (q/render (Ticker price) tickercontainer)))
          (recur)))))

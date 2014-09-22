@@ -11,7 +11,7 @@
     [:div.container
     [:div#menucontainer
            [:div#tickercontainer
-            [:div.ticker [:div.ticker-price price] [:div.ticker-currency "BTC/XMR"]]]
+            [:div.ticker [:div#ticker-price {:class "ticker-price"} price] [:div.ticker-currency "BTC/XMR"]]]
            [:div#chart-control
             {:class "menu"} (str "6h " "24h " "2d " "4d " "1w " "2w " "1m " "all ")]
            [:div#market-menu {:class "menu selected-menu"} "poloniex"]]
