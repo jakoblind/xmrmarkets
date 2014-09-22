@@ -35,7 +35,6 @@
     (include-js "d3.min.js")
     (include-js "candlestick.js")
     (include-js "moment.js")
-    (include-js "moment-timezone.js")
     (include-js "app.js")]))
 
 (defn json [content]

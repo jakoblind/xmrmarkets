@@ -7,8 +7,6 @@
           [quiescent.dom :as d])
 (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(.add (.-tz js/moment) "Etc/UTC|UTC|0|0|")
-
 (defonce selected-chart-period (atom {:period "4d"}))
 
 (q/defcomponent Ticker [t]
