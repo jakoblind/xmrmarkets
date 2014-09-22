@@ -39,7 +39,7 @@
 (defn update-ticker-loop [] (future
                          (while (not (= @server nil))
                            (let [t @(poloniex/get-xmr-ticker)]
-                             (if (not= (t nil))
+                             (if (not (nil? t))
                                (reset! latest-xmr-ticker t)))
                            (let [h @(poloniex/get-xmr-trade-history)]
                              (if (not (empty? h))
