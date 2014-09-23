@@ -15,7 +15,7 @@
             [clojure.tools.cli :refer [cli]]
             [clojure.tools.logging :as log]
             [ring.util.response :refer [response]]
-            [clojure.core.async :refer [<! >! put! close! go go-loop timeout]])(:gen-class))
+            [clojure.core.async :refer [<! >! put! close! go go-loop timeout chan]])(:gen-class))
 
 (defonce server (atom nil))
 
@@ -36,20 +36,19 @@
 
 (defonce cache-xmr-history (atom (all-xmr-history)))
 
-(defn update-ticker-loop [] (future
-                         (while (not (= @server nil))
-                           (let [t @(poloniex/get-xmr-ticker)]
-                             (if (not (nil? t))
-                               (reset! latest-xmr-ticker t)))
-                           (let [h @(poloniex/get-xmr-trade-history)]
-                             (if (not (empty? h))
-                               (reset! latest-xmr-trade-history h)))
-                           (Thread/sleep (:ticker-loop-interval config)))))
-
-(defn update-history-loop [] (future
-                         (while (not (= @server nil))
-                           (reset! cache-xmr-history (all-xmr-history))
-                           (Thread/sleep (:ticker-loop-interval config)))))
+(defn update-ticker-loop []
+  (let [c (chan)]
+    (go-loop []
+      (println "ok looping")
+      (let [t @(poloniex/get-xmr-ticker)]
+        (if (not (nil? t))
+          (reset! latest-xmr-ticker t)))
+      (let [h @(poloniex/get-xmr-trade-history)]
+        (if (not (empty? h))
+          (reset! latest-xmr-trade-history h)))
+      (reset! cache-xmr-history (all-xmr-history))
+      (<! (timeout (:ticker-loop-interval config)))
+      (when (not= @server nil) (recur)))))
 
 (defn ws-handler [{:keys [ws-channel] :as req}]
   (println "Opened connection from" (:remote-addr req))
@@ -88,7 +87,6 @@
     (let [handler (if in-dev? (reload/wrap-reload (site #'routes)) (site routes))]
       (reset! server (run-server handler {:port 8080}))
       (update-ticker-loop)
-      (update-history-loop)
       (log/info "server started"))))
 
 (defn stop-server []
