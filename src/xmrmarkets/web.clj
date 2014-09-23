@@ -39,7 +39,6 @@
 (defn update-ticker-loop []
   (let [c (chan)]
     (go-loop []
-      (println "ok looping")
       (let [t @(poloniex/get-xmr-ticker)]
         (if (not (nil? t))
           (reset! latest-xmr-ticker t)))
@@ -51,7 +50,6 @@
       (when (not= @server nil) (recur)))))
 
 (defn ws-handler [{:keys [ws-channel] :as req}]
-  (println "Opened connection from" (:remote-addr req))
   (go-loop []
     (let [msg (:message (<! ws-channel))]
       (>! ws-channel
