@@ -32,6 +32,7 @@
     (include-css "font-awesome-4.2.0/css/font-awesome.min.css")
     (include-css "main.css")
     (include-js "react.js")
+    (include-js "analytics.js")
     (include-js "d3.min.js")
     (include-js "candlestick.js")
     (include-js "moment.js")
